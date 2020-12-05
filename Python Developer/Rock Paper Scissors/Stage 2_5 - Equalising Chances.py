@@ -2,7 +2,6 @@ import random
 
 
 def winner(user, comp):
-
     draw = False
 
     if comp == user:
@@ -21,13 +20,13 @@ def winner(user, comp):
             if user == 'rock':
                 print(f'Well done the computer chose {comp} and failed')
             else:
-                 print(f'Sorry but the computer chose {comp}')
+                print(f'Sorry but the computer chose {comp}')
 
         elif comp == 'paper':
             if user == 'scissors':
                 print(f'Well done the computer chose {comp} and failed')
             else:
-                 print(f'Sorry but the computer chose {comp}')
+                print(f'Sorry but the computer chose {comp}')
 
 
 choices = ['rock', 'paper', 'scissors']
