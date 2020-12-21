@@ -56,6 +56,18 @@ while True:
 
         try:
             equ = i.split()
+
+            print(equ)
+            # determine if variables used
+            if alphabet in equ:  # will not work, check if element in dictionary first!
+                # Variables used
+                for index, element in equ:
+                    print(element)
+                    if element in variables.keys():
+                        equ[index] = variables[element]  #  replace elements in equation with the correct
+                        # values, taking care of + mand minues
+
+
             if '-' in equ[0]:
                 # try:
                 sum = -float(equ[0][1:])
@@ -87,3 +99,4 @@ while True:
 
         except:
             print('Invalid Expression')
+
