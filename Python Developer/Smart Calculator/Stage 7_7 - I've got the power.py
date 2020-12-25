@@ -23,17 +23,77 @@ def is_negative(equ: List, index: int) -> bool:
     else:
         for i, char in enumerate(str(equ[index])):
             if char != '-':
-                if (i)%2 == 0:
+                if (i) % 2 == 0:
                     return False
                 else:
                     return True
 
-def priority():
-    b, dm, a_s = [], [], [], []
-    
-    
-    
-    
+def mult_divide_scan()
+    should be a function used in calc
+    if * or / found mult/divide ones next to each other, retun
+    answers and +/-'s unreplaced to calc'
+
+def bracket_scan():
+    count = int
+    index_of_open, index_of_closed = [], []
+
+    for index, char in equ:
+        if char == '(':
+            index_of_open.append(index)
+
+
+
+    if count of open inside > 1
+        find more than one close
+    if bracket closed found send to calc
+        doing internal things first,
+send results and indices to replace to priority
+    return result and indicies to replace
+
+
+# def priority():
+#     b, d, m, a, s = [], [], [], [], []
+#     open_brackets, closed_brackets = []
+#     for i, char in enumerate(equ):
+#         if char == '(':
+#             bracket_scan(equ, i)
+#
+#             get bracket indices send to calculate function
+#             send next bracket with the previous bracket replaced by its result
+
+def convert(equ):
+    symbols = '()*/+-='
+    for index, char in enumerate(equ):
+        if char not in symbols:
+            equ[index] = float(char)
+
+
+def solver(equ):
+    solved = False
+    while not solved:
+            if '(' in equ:
+                # send to bracket scanner
+                # bracket scanner then sends the primary bracket back
+                # and this returns the answer to replace that bracket with
+            if '*' in equ:
+                i = equ.index('*')
+                equ[i-1, i + 1] = equ[i-1] * equ[i+1]
+                continue
+            elif '/' in equ:
+                i = equ.index('/')
+                equ[i-1, i + 1] = equ[i-1] / equ[i+1]
+            elif '+' in equ:
+                i = equ.index('+')
+                equ[i-1, i + 1] = equ[i-1] + equ[i+1]
+            elif '-' in equ:
+                i = equ.index('-')
+                equ[i-1, i + 1] = equ[i-1] + equ[i+1]
+            else:
+                return equ[0]
+
+
+
+
 
 def define_variable():
 
@@ -137,3 +197,4 @@ while True:
                 print('Unknown variable')
             else:
                 print('Invalid Expression')
+
