@@ -98,14 +98,17 @@ def solver(equ):
             continue
         elif '+' in equ and '(' not in equ:
             i = equ.index('+')
-            equ[i - 1:i + 2] = [equ[i - 1] + equ[i + 1]]
-            continue
+            if equ[i-2] =='-':
+                equ[i - 1:i + 2] = [equ[i - 1] - equ[i + 1]]
+            else:
+                equ[i - 1:i + 2] = [equ[i - 1] + equ[i + 1]]
+                continue
         elif '-' in equ and '(' not in equ:
             i = equ.index('-')
             equ[i - 1:i + 2] = [equ[i - 1] - equ[i + 1]]
             continue
         elif len(equ) == 1:
-            return equ[0]
+            return int(equ[0])
         else:
             continue
 
@@ -178,4 +181,3 @@ while True:
         #         print('Unknown variable')
         #     else:
         #         print('Invalid Expression')
-
