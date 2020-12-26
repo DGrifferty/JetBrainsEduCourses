@@ -33,7 +33,7 @@ def bracket_scan(equ):
 
 
 def convert(equ, variables):
-    symbols = '()*/+-='
+    symbols = '()*/+-=^'
     for index, element in enumerate(equ):
         if element not in symbols:
             equ[index] = is_negative(equ, index, variables)
@@ -88,6 +88,13 @@ def solver(equ):
         if '(' in equ:
             equ = bracket_scan(equ)
             continue
+        elif '^' in equ and '(' not in equ:
+            i = equ.index('^')
+            for p in range(int(equ[i + 1]) - 1):
+                equ[i - 1] *= equ[i - 1]
+
+            equ[i - 1:i + 2] = [equ[i - 1]]
+
         elif '/' in equ and '(' not in equ:
             i = equ.index('/')
             equ[i - 1:i + 2] = [equ[i - 1] / equ[i + 1]]
@@ -114,6 +121,7 @@ def solver(equ):
 
 
 def define_variable(i, variables):
+    alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
     try:
         equ = i.split()
         equ = ''.join(equ)
@@ -130,20 +138,22 @@ def define_variable(i, variables):
             if char in alphabet:
                 if equ[-1] not in variables.keys():
                     raise Exception('Invalid assignment')
+                else:
+                    variables[equ[0]] = variables[equ[-1]]
+                    return variables
 
-        else:
-            if equ[-1] in variables.keys():
-                variables[equ[0]] = variables[equ[-1]]
-            else:
-                variables[equ[0]] = equ[-1]
+        variables[equ[0]] = equ[-1]
 
         return variables
 
     except ValueError:
         print('Invalid assignment')
     except Exception as e:
-        print(e)
-
+        e = str(e)
+        if e == 'Invalid assignment':
+            print('Invalid assignment')
+        elif e == 'Invalid identifier':
+            print('Invalid identifier')
 
 while True:
 
