@@ -34,10 +34,20 @@ def bracket_scan(equ):
 
 def convert(equ, variables):
     symbols = '()*/+-=^'
+    breaks = False
     for index, element in enumerate(equ):
         if element not in symbols:
-            equ[index] = is_negative(equ, index, variables)
-    return equ
+            for char in element:
+                if char in alphabet:
+                    if element not in variables.keys():
+                        print('Unknown variable')
+                        breaks = True
+                        break
+            if breaks == False:
+                equ[index] = is_negative(equ, index, variables)
+            else:
+                break
+    return equ, breaks
 
 
 def is_negative(equ: List, index: int, variables) -> float:
@@ -90,10 +100,11 @@ def solver(equ):
             continue
         elif '^' in equ and '(' not in equ:
             i = equ.index('^')
+            q = equ[i - 1]
             for p in range(int(equ[i + 1]) - 1):
-                equ[i - 1] *= equ[i - 1]
-
+                equ[i - 1] *= q
             equ[i - 1:i + 2] = [equ[i - 1]]
+            continue
 
         elif '/' in equ and '(' not in equ:
             i = equ.index('/')
@@ -154,6 +165,8 @@ def define_variable(i, variables):
             print('Invalid assignment')
         elif e == 'Invalid identifier':
             print('Invalid identifier')
+        elif e == 'Unknown variable':
+            print('Unknown variable')
 
 while True:
 
@@ -169,7 +182,8 @@ while True:
         elif i == '/help':
             print('This program will calculate the sum of a user'
                   'enter list of numbers separated by spaces.\n'
-                  'It can calculate equations containing plus and minus only.')
+                  'It can calculate equations containing +, -, *, / (), ^ only. \n'
+                  'You can assign variables using = to use in later question')
             continue
         else:
             print('Unknown command')
@@ -180,8 +194,11 @@ while True:
     else:
 
         equ = i.split()
-        equ = convert(equ, variables)
-        print(solver(equ))
+        equ, breaks= convert(equ, variables)
+        if breaks == False:
+            print(solver(equ))
+        else:
+            continue
 
         #
         # except Exception as e:
