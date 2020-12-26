@@ -18,10 +18,7 @@ def bracket_scan(equ):
                     count += 1
                 if ch2 == ')':
                     if count == 0:
-                        # print(f'{equ[open_index:closed_index +  2]} equ')
-                        # print(f'{[equ[open_index + 1:closed_index + 1]]} solver' )
                         equ[open_index:closed_index + 2] = [solver(equ[open_index + 1:closed_index + 1])]
-                        # print(f'{equ} equ after')
                         return equ
                         if '(' not in equ:
                             solved = True
@@ -44,7 +41,6 @@ def convert(equ, variables):
 
 
 def is_negative(equ: List, index: int, variables) -> float:
-    # add errors
     plus_count = 0
     if '-' not in str(equ[index]) and '+' not in str(equ[index]):
         if str(equ[index]) not in variables.keys():
@@ -88,29 +84,30 @@ def is_negative(equ: List, index: int, variables) -> float:
 
 
 def solver(equ):
-    print(equ)
     while True:
         if '(' in equ:
             equ = bracket_scan(equ)
             continue
         elif '/' in equ and '(' not in equ:
             i = equ.index('/')
-            equ[i - 1:i + 1] = [equ[i - 1] / equ[i + 1]]
+            equ[i - 1:i + 2] = [equ[i - 1] / equ[i + 1]]
             continue
         elif '*' in equ and '(' not in equ:
             i = equ.index('*')
-            equ[i - 1:i + 1] = [equ[i - 1] * equ[i + 1]]
+            equ[i - 1:i + 2] = [equ[i - 1] * equ[i + 1]]
             continue
         elif '+' in equ and '(' not in equ:
             i = equ.index('+')
-            equ[i - 1:i + 1] = [equ[i - 1] + equ[i + 1]]
+            equ[i - 1:i + 2] = [equ[i - 1] + equ[i + 1]]
             continue
         elif '-' in equ and '(' not in equ:
             i = equ.index('-')
-            equ[i - 1:i + 1] = [equ[i - 1] - equ[i + 1]]
+            equ[i - 1:i + 2] = [equ[i - 1] - equ[i + 1]]
             continue
-        else:
+        elif len(equ) == 1:
             return equ[0]
+        else:
+            continue
 
 
 def define_variable(i, variables):
@@ -136,8 +133,6 @@ def define_variable(i, variables):
                 variables[equ[0]] = variables[equ[-1]]
             else:
                 variables[equ[0]] = equ[-1]
-
-        print(variables)
 
         return variables
 
@@ -183,3 +178,4 @@ while True:
         #         print('Unknown variable')
         #     else:
         #         print('Invalid Expression')
+
