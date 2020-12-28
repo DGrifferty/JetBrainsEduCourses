@@ -2,11 +2,15 @@ def is_negative():
     pass
 
 
-def define_variable():
+def define_variable(input, variables):
     pass
 
 
-def solve():
+def solve(input, variables):
+    pass
+
+
+def replace_variables(input):
     pass
 
 
@@ -82,14 +86,16 @@ def check_input(user_input, variables):
                         conv_equ.append('bv')
                         break
                 elif char in '+-':
-                    if index ==0:
+                    if index == 0:
                         continue
                     elif element[index - 1] in '+-':
                         continue
                     else:
                         E = 'bad element - +- in middle of element'
+                        return False, E
                 else:
                     E = 'bad element - not allowed element/ character'
+                    return False, E
 
             if contains_number:
                 conv_equ.append('n')
@@ -107,7 +113,6 @@ def check_input(user_input, variables):
         # More than one =
         allowed_combs = [['uav', '=', 'n'], ['uav', '=', 'av']]
         if conv_equ not in allowed_combs:
-            print(conv_equ)
             if 'bv' == equ[0]:
                 E = 'Invalid identifier'
             elif 'bv' == equ[2]:
@@ -116,25 +121,95 @@ def check_input(user_input, variables):
                 E = 'Invalid assignment'
             return False, E
 
+        elif 'av' not in conv_equ:
+            return True, 'Assignment'
         else:
-            print(conv_equ)
-            return True, None
+            return True, 'Assignment', True
 
     if 'uav' in conv_equ:
         E = 'Unassigned variable used'
         return False, E
 
+    if conv_equ.count('(') != conv_equ.count(')'):
+        if conv_equ.count('(') >= conv_equ.count(')'):
+            E = 'More opening brackets than closing brackets'
+        else:
+            E = 'More closing brackets than opening brackets'
+        return False, E
+
+    open_count = 0
+
     for index, element in enumerate(conv_equ):
         # Here element can equal (, ), s, n, av
-        if element == n
+        if element == 'n':
+            if index != len(conv_equ) - 1:
+                if conv_equ[index + 1] not in 's)':  # right
+                    E = 'Bad symbol to right of number'
+                    return False, E
+            if index != 0:
+                if conv_equ[index - 1] not in '(s':  # left
+                    E = 'Bad symbol to left of number'
+                    return False, E
+        elif element == 's':
+            if index == 0:
+                E = 'Symbol at start of equation'
+                return False, E
+            if index == len(conv_equ) - 1:
+                E = 'Symbol at end of equation'
+                return False, E
+            if conv_equ[index + 1] not in '(nav':  # right
+                E = 'Bad symbol to right of symbol'
+                return False, E
+            if conv_equ[index - 1] not in ')nav':  # left
+                E = 'Bad symbol to left of symbol'
+                return False, E
 
-    # if number not at start or end there should be symbols to left and right, or closed bracket to right
+        elif element == 'av':
+            if conv_equ[index + 1] not in 's':  # right
+                E = 'Bad symbol to right of number'
+                return False, E
+            if index != 0:
+                if conv_equ[index - 1] not in 's':  # left
+                    E = 'Bad symbol to left of number'
+                    return False, E
 
-    # if open bracket should have symbol to left and number to right, unless first
-    # should be same number of open brackets as closed brackets
-    # symbols should have numbers to right and left, or open brackets to right, or closed brackets to left
+        elif element == '(':
+            open_count += 1
+            # count brackets opening and closed with integers if closed, minus from open, if it goes negative close before open
+            # if they are not zero at the end, bad count!
+            if index == len(conv_equ) - 1:
+                E = 'Opening bracket at end of equation'
+                return False, E
+            if conv_equ[index + 1] not in 'nav':  # right
+                E = ' Bad right of opening bracket'
+                return False, E
+            if index != 0:
+                if conv_equ[index - 1] not in 's':
+                    E = 'Bad left of opening bracket'
+                    return False, E
 
-    print(conv_equ)
+        elif element == ')':
+            open_count -= 1
+            if open_count < 0:
+                E = 'Closed bracket before open bracket'
+                return False, E
+            if index != len(conv_equ) - 1:
+                if conv_equ[index + 1] not in 's)':  # right
+                    E = ' Bad right of closing bracket'
+                    return False, E
+            if index != 0:
+                if conv_equ[index - 1] not in ')nav':
+                    E = 'Bad left of closing bracket'
+                    return False, E
+
+    if 'av' not in conv_equ:
+        return True, 'Calculation'
+    else:
+        return True, 'Calculation', True
+
+    # TODO: if [n (] insert * or if )(
+    # TODO: Make check input tell whether av's have been used, so they can be replaced
+    #
 
 
 if __name__ == '__main__':
@@ -146,6 +221,7 @@ if __name__ == '__main__':
     while True:
 
         user_input = input()
+        av_used = False
 
         if user_input == '':
             continue
@@ -164,4 +240,19 @@ if __name__ == '__main__':
                 print('Unknown command')
                 continue
 
-        print(check_input(user_input, variables))
+        tup = check_input(user_input, variables)
+
+        if len(tup) == 2:
+            check, type = tup
+        else:
+            check, type, av_used = tup
+
+        if check == False:
+            print(type)
+        else:
+            if type == 'Assignment':
+                if av_used:
+                    replace_variables(user_input)
+                define_variable(user_input)
+            elif type == 'Calculation':
+                solve(user_input)
