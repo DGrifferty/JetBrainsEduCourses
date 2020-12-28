@@ -1,6 +1,7 @@
 def is_negative():
     pass
 
+
 def define_variable():
     pass
 
@@ -35,10 +36,13 @@ def bracket_scan(equ):
 
     return equ
 
+
 def check_input(user_input, variables):
     '''Checks input by converting every element in the equation to a
-    character and then looking at the sequence of characters'''
-    numbers = '0123456789'
+    character and then looking at the sequence of characters
+    returns True and none if input is good, or false and E if it is bad,
+    E will be a string and state the issue'''
+
     equ = user_input.split()
     conv_equ = []
     symbols = '^*+-/'
@@ -65,7 +69,7 @@ def check_input(user_input, variables):
         elif element in symbols:
             conv_equ.append('s')
         else:
-            for char in element:
+            for index, char in enumerate(element):
                 print(f'{char}, char')
                 if char in numbers:
                     contains_number = True
@@ -78,7 +82,11 @@ def check_input(user_input, variables):
                         conv_equ.append('bv')
                         break
                 elif char in '+-':
-                    if contains_letter or contains_number:
+                    if index ==0:
+                        continue
+                    elif element[index - 1] in '+-':
+                        continue
+                    else:
                         E = 'bad element - +- in middle of element'
                 else:
                     E = 'bad element - not allowed element/ character'
@@ -87,6 +95,10 @@ def check_input(user_input, variables):
                 conv_equ.append('n')
             else:
                 conv_equ.append('uav')
+
+    if 'bv' in conv_equ:
+        E = 'Bv used'
+        return False, E
 
     if '=' in conv_equ:
 
@@ -111,17 +123,16 @@ def check_input(user_input, variables):
     if 'uav' in conv_equ:
         E = 'Unassigned variable used'
         return False, E
-    if 'bv' in conv_equ:
-        E = 'Bv used'
-        return False, E
+
+    for index, element in enumerate(conv_equ):
+        # Here element can equal (, ), s, n, av
+        if element == n
+
     # if number not at start or end there should be symbols to left and right, or closed bracket to right
 
     # if open bracket should have symbol to left and number to right, unless first
     # should be same number of open brackets as closed brackets
     # symbols should have numbers to right and left, or open brackets to right, or closed brackets to left
-
-
-
 
     print(conv_equ)
 
@@ -154,4 +165,3 @@ if __name__ == '__main__':
                 continue
 
         print(check_input(user_input, variables))
-
