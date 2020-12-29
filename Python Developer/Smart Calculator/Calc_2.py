@@ -1,8 +1,23 @@
+def is_negative(i):
+    
+    for part in i:
+        pass
+    return True
+
+
 def conv_to_float(equ):
+    symbols = '^*+/()'
+
+    for index, element in enumerate(equ):
+        if '-' in equ:
+            equ[index] = is_negative(element)
+        elif element in symbols:
+            continue
+        else:
+            equ[index] = float(element)
 
 
 def define_variable(user_input, variables):
-
     equ = user_input.split()
     equ = ''.join(equ)
     equ = equ.split('=')
@@ -19,7 +34,6 @@ def solve(input, variables):
 
 
 def replace_variables(user_input):
-
     equ = user_input.split()
 
     # could use conv_equ to save computation time
@@ -32,7 +46,7 @@ def replace_variables(user_input):
 
 
 def bracket_scan(equ):
-    #TODO: legacy code - Check
+    # TODO: legacy code - Check
     count = 0
     solved = False
 
@@ -281,5 +295,4 @@ if __name__ == '__main__':
                 else:
                     equ = user_input.split()
                     solve(equ)
-
 
