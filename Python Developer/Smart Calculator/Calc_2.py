@@ -1,20 +1,38 @@
-def is_negative():
-    pass
+def conv_to_float(equ):
 
 
-def define_variable(input, variables):
-    pass
+def define_variable(user_input, variables):
+
+    equ = user_input.split()
+    equ = ''.join(equ)
+    equ = equ.split('=')
+
+    if equ[-1] in variables.keys():
+        equ[-1] = variables[equ[0]]
+    variables[equ[0]] = equ[-1]
+
+    return variables
 
 
 def solve(input, variables):
     pass
 
 
-def replace_variables(input):
-    pass
+def replace_variables(user_input):
+
+    equ = user_input.split()
+
+    # could use conv_equ to save computation time
+
+    for index, element in enumerate(equ):
+        if element in variables.keys():
+            equ[index] = variables[equ[index]]
+
+    return equ
 
 
 def bracket_scan(equ):
+    #TODO: legacy code - Check
     count = 0
     solved = False
 
@@ -37,7 +55,6 @@ def bracket_scan(equ):
                 else:
                     if count != 0 and closed_index == len(equ) - 1:
                         raise Exception('Unequal brackets')
-
     return equ
 
 
@@ -50,17 +67,21 @@ def check_input(user_input, variables):
     equ = user_input.split()
     conv_equ = []
     symbols = '^*+-/'
+    # negative_check_indices = []
     # av = assigned variable
     # bv = bad variable - letters and numbers
     # uav = unassigned variable (just letters)
     # n = number
     # s = symbol (not brackets or =)
 
-    for element in equ:
+    for p, element in enumerate(equ):
         contains_number = False
         contains_letter = False
 
         print(f'{element} element')
+
+        # if '-' in element:
+        #     negative_check_indices.append(p)
 
         if element in variables.keys():
             conv_equ.append('av')
@@ -251,8 +272,14 @@ if __name__ == '__main__':
             print(type)
         else:
             if type == 'Assignment':
-                if av_used:
-                    replace_variables(user_input)
                 define_variable(user_input)
             elif type == 'Calculation':
-                solve(user_input)
+                if av_used:
+                    equ = replace_variables(input, variables)
+                    conv_to_float(equ)
+                    solve(equ)
+                else:
+                    equ = user_input.split()
+                    solve(equ)
+
+
