@@ -1,103 +1,3 @@
-def is_negative(i):
-    # redo with any and count
-    negative_count = 0
-    symbol = True
-    for index, part in enumerate(i):
-        if part == '-':
-            negative_count += 1
-        elif part =='+':
-            pass
-        elif part in numbers or part in alphabet:
-            p = index
-            symbol = False
-            break
-    if not symbol:
-        if negative_count%p == 0:
-            return [i[:p+1]]
-        else:
-            return ['-' + i[:p+1]]
-    if symbol:
-        if negative_count%2 == 0:
-            return '+'
-        else:
-            return '-'
-
-def conv_to_float(equ, variables):
-    symbols = '^*+/()'
-    numbers = '1234567890'
-    alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    requ = []
-
-    for index, element in enumerate(equ):
-        if '-' in equ:
-            i = is_negative(element)
-            if any(part in numbers for part in i):
-                equ.append(float(i))
-                continue
-            elif any(part in alphabet for part in i):
-                if '-' in i:
-                    requ.append(-float(variables(i[1:])))
-                    continue
-                else:
-                    requ.append(float(variables[i]))
-                    continue
-            else:
-                equ[index] = i
-        elif element in symbols:
-            requ.append(element)
-            continue
-        elif any(part in alphabet for part in element):
-            requ.append(float(variables[element]))
-        else:
-            requ.append(float(element))
-
-    return requ
-
-
-def define_variable(user_input, variables):
-    equ = user_input.split()
-    equ = ''.join(equ)
-    equ = equ.split('=')
-
-    if equ[-1] in variables.keys():
-        equ[-1] = variables[equ[0]]
-    variables[equ[0]] = equ[-1]
-
-    return variables
-
-
-def solve(input):
-    print('solve')
-    print(input)
-    pass
-
-def bracket_scan(equ):
-    # TODO: legacy code - Check
-    count = 0
-    solved = False
-
-    for open_index, ch in enumerate(equ):
-        if ch == '(':
-            if solved == True:
-                break
-            for closed_index, ch2 in enumerate(equ[open_index + 1:]):
-                if ch2 == '(':
-                    count += 1
-                if ch2 == ')':
-                    if count == 0:
-                        equ[open_index:closed_index + 2] = [solver(equ[open_index + 1:closed_index + 1])]
-                        return equ
-                        if '(' not in equ:
-                            solved = True
-                        break
-                    else:
-                        count -= 1
-                else:
-                    if count != 0 and closed_index == len(equ) - 1:
-                        raise Exception('Unequal brackets')
-    return equ
-
-
 def check_input(user_input, variables):
     '''Checks input by converting every element in the equation to a
     character and then looking at the sequence of characters
@@ -118,11 +18,6 @@ def check_input(user_input, variables):
         contains_number = False
         contains_letter = False
 
-        print(f'{element} element')
-
-        # if '-' in element:
-        #     negative_check_indices.append(p)
-
         if element in variables.keys():
             conv_equ.append('av')
         elif element == '(':
@@ -135,7 +30,6 @@ def check_input(user_input, variables):
             conv_equ.append('s')
         else:
             for index, char in enumerate(element):
-                print(f'{char}, char')
                 if char in numbers:
                     contains_number = True
                     if contains_letter:
@@ -146,10 +40,11 @@ def check_input(user_input, variables):
                     if contains_number:
                         conv_equ.append('bv')
                         break
-                elif char in '+-':
+                elif char in ['+', '-']:
                     if index == 0:
                         continue
-                    elif element[index - 1] in '+-':
+                    elif element[index - 1] in ['-', '+']:
+                        long_symbol = True
                         continue
                     else:
                         E = 'bad element - +- in middle of element'
@@ -160,8 +55,10 @@ def check_input(user_input, variables):
 
             if contains_number:
                 conv_equ.append('n')
-            else:
+            elif contains_letter:
                 conv_equ.append('uav')
+            elif long_symbol:
+                conv_equ.append('s')
 
     if 'bv' in conv_equ:
         E = 'Bv used'
@@ -226,9 +123,10 @@ def check_input(user_input, variables):
                 return False, E
 
         elif element == 'av':
-            if conv_equ[index + 1] not in 's':  # right
-                E = 'Bad symbol to right of number'
-                return False, E
+            if index != len(conv_equ) - 1:
+                if conv_equ[index + 1] not in 's':  # right
+                    E = 'Bad symbol to right of number'
+                    return False, E
             if index != 0:
                 if conv_equ[index - 1] not in 's':  # left
                     E = 'Bad symbol to left of number'
@@ -266,11 +164,160 @@ def check_input(user_input, variables):
     if 'av' not in conv_equ:
         return True, 'Calculation'
     else:
-        return True, 'Calculation', True
+        return True, 'Calculation'
 
     # TODO: if [n (] insert * or if )(
     # TODO: Make check input tell whether av's have been used, so they can be replaced
     #
+
+
+def is_negative(i):
+    # redo with any and count
+    negative_count = 0
+    symbol = True
+    assert '-' in i
+    if len(i) == 1:
+        return '-'
+    for index, part in enumerate(i):
+        if part == '-':
+            negative_count += 1
+        elif part == '+':
+            pass
+        elif part in numbers or part in alphabet:
+            p = index
+            symbol = False
+            break
+    if not symbol:
+        if negative_count % p == 0:
+            return [i[:p + 1]]
+        else:
+            return ['-' + i[:p + 1]]
+    if symbol:
+        if negative_count % 2 == 0:
+            return '+'
+        else:
+            return '-'
+
+
+def define_variable(user_input, variables):
+    equ = user_input.split()
+    equ = ''.join(equ)
+    equ = equ.split('=')
+
+    if equ[-1] in variables.keys():
+        equ[-1] = variables[equ[0]]
+    variables[equ[0]] = equ[-1]
+
+    return variables
+
+
+def conv_to_float(equ, variables):
+    symbols = '^*+/()'
+    numbers = '1234567890'
+    alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    requ = []
+
+    for index, element in enumerate(equ):
+        if '-' in element:
+            if len(element) == 1:
+                requ.append('-')
+                continue
+            i = is_negative(element)
+            if any(part in numbers for part in i):
+                equ.append(float(i))
+                continue
+            elif any(part in alphabet for part in i):
+                if '-' in i:
+                    requ.append(-float(variables(i[1:])))
+                    continue
+                else:
+                    requ.append(float(variables[i]))
+                    continue
+            else:
+                requ.append(i)
+        elif element in symbols:
+            requ.append(element)
+            continue
+        elif any(part in alphabet for part in element):
+            requ.append(float(variables[element]))
+        elif all(part in ['-', '+'] for part in element):
+            requ.append(is_negative(element))
+        else:
+            requ.append(float(element))
+    return requ
+
+
+def bracket_scan(equ):
+    count = 0
+
+    for open_index, ch in enumerate(equ):
+        if ch == '(':
+            for closed_index, ch2 in enumerate(equ):
+                if ch2 == '(':
+                    if closed_index == open_index:
+                        continue
+                    else:
+                        count += 1
+                if ch2 == ')':
+                    if count == 0:
+                        equ[open_index:closed_index + 1] = [solve(equ[open_index + 1:closed_index])]
+                        return equ
+                    else:
+                        count -= 1
+    return equ
+
+
+def solve(equ):
+    # i = 0
+    while True:
+        # if i < 10:
+        #     i += 1
+        #     print(f'Solve {i}')
+        #     print(equ)
+
+        if '(' in equ:
+            equ = bracket_scan(equ)
+            continue
+        elif '^' in equ and '(' not in equ:
+            i = equ.index('^')
+            q = equ[i - 1]
+            for p in range(int(equ[i + 1]) - 1):
+                equ[i - 1] *= q
+            equ[i - 1:i + 2] = [equ[i - 1]]
+            continue
+
+        elif '/' in equ and '(' not in equ:
+            i = equ.index('/')
+            equ[i - 1:i + 2] = [equ[i - 1] / equ[i + 1]]
+            continue
+        elif '*' in equ and '(' not in equ:
+            i = equ.index('*')
+            equ[i - 1:i + 2] = [equ[i - 1] * equ[i + 1]]
+            continue
+        elif '+' in equ and '(' not in equ:
+            i = equ.index('+')
+            if equ[i - 2] == '-':
+                equ[i - 1:i + 2] = [equ[i - 1] - equ[i + 1]]
+            else:
+                equ[i - 1:i + 2] = [equ[i - 1] + equ[i + 1]]
+                continue
+        elif '-' in equ and '(' not in equ:
+            # i = equ.index('-')
+            # minus_count = 0
+            # for char in equ[i]:
+            #     if char == '-':
+            #         minus_count += 1
+            #     if char == '+':
+            #         pass
+            # if minus_count % 2 == 0:
+            #     equ[i - 1:i + 2] = [equ[i - 1] + equ[i + 1]]
+            # else:
+            equ[i - 1:i + 2] = [equ[i - 1] - equ[i + 1]]
+            continue
+        elif len(equ) == 1:
+            return int(equ[0])
+        else:
+            continue
 
 
 if __name__ == '__main__':
@@ -300,12 +347,7 @@ if __name__ == '__main__':
                 print('Unknown command')
                 continue
 
-        tup = check_input(user_input, variables)
-
-        if len(tup) == 2:
-            check, type = tup
-        else:
-            check, type, av_used = tup
+        check, type = check_input(user_input, variables)
 
         if check == False:
             print(type)
@@ -315,5 +357,5 @@ if __name__ == '__main__':
             elif type == 'Calculation':
                 equ = user_input.split()
                 equ = conv_to_float(equ, variables)
-                solve(equ)
-
+                print(f'equ {equ}')
+                print(solve(equ))
