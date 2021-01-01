@@ -168,11 +168,10 @@ def check_input(user_input, variables):
 
     # TODO: if [n (] insert * or if )(
     # TODO: Make check input tell whether av's have been used, so they can be replaced
-    #
 
 
 def is_negative(i):
-    # redo with any and count
+
     negative_count = 0
     symbol = True
     assert '-' in i
@@ -302,16 +301,7 @@ def solve(equ):
                 equ[i - 1:i + 2] = [equ[i - 1] + equ[i + 1]]
                 continue
         elif '-' in equ and '(' not in equ:
-            # i = equ.index('-')
-            # minus_count = 0
-            # for char in equ[i]:
-            #     if char == '-':
-            #         minus_count += 1
-            #     if char == '+':
-            #         pass
-            # if minus_count % 2 == 0:
-            #     equ[i - 1:i + 2] = [equ[i - 1] + equ[i + 1]]
-            # else:
+            i = equ.index('-')
             equ[i - 1:i + 2] = [equ[i - 1] - equ[i + 1]]
             continue
         elif len(equ) == 1:
