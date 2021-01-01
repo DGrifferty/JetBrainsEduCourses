@@ -1,20 +1,57 @@
 def is_negative(i):
-    
-    for part in i:
-        pass
-    return True
+    # redo with any and count
+    negative_count = 0
+    symbol = True
+    for index, part in enumerate(i):
+        if part == '-':
+            negative_count += 1
+        elif part =='+':
+            pass
+        elif part in numbers or part in alphabet:
+            p = index
+            symbol = False
+            break
+    if not symbol:
+        if negative_count%p == 0:
+            return [i[:p+1]]
+        else:
+            return ['-' + i[:p+1]]
+    if symbol:
+        if negative_count%2 == 0:
+            return '+'
+        else:
+            return '-'
 
-
-def conv_to_float(equ):
+def conv_to_float(equ, variables):
     symbols = '^*+/()'
+    numbers = '1234567890'
+    alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    requ = []
 
     for index, element in enumerate(equ):
         if '-' in equ:
-            equ[index] = is_negative(element)
+            i = is_negative(element)
+            if any(part in numbers for part in i):
+                equ.append(float(i))
+                continue
+            elif any(part in alphabet for part in i):
+                if '-' in i:
+                    requ.append(-float(variables(i[1:])))
+                    continue
+                else:
+                    requ.append(float(variables[i]))
+                    continue
+            else:
+                equ[index] = i
         elif element in symbols:
+            requ.append(element)
             continue
+        elif any(part in alphabet for part in element):
+            requ.append(float(variables[element]))
         else:
-            equ[index] = float(element)
+            requ.append(float(element))
+
+    return requ
 
 
 def define_variable(user_input, variables):
@@ -29,21 +66,10 @@ def define_variable(user_input, variables):
     return variables
 
 
-def solve(input, variables):
+def solve(input):
+    print('solve')
+    print(input)
     pass
-
-
-def replace_variables(user_input):
-    equ = user_input.split()
-
-    # could use conv_equ to save computation time
-
-    for index, element in enumerate(equ):
-        if element in variables.keys():
-            equ[index] = variables[equ[index]]
-
-    return equ
-
 
 def bracket_scan(equ):
     # TODO: legacy code - Check
@@ -256,7 +282,6 @@ if __name__ == '__main__':
     while True:
 
         user_input = input()
-        av_used = False
 
         if user_input == '':
             continue
@@ -286,13 +311,9 @@ if __name__ == '__main__':
             print(type)
         else:
             if type == 'Assignment':
-                define_variable(user_input)
+                define_variable(user_input, variables)
             elif type == 'Calculation':
-                if av_used:
-                    equ = replace_variables(input, variables)
-                    conv_to_float(equ)
-                    solve(equ)
-                else:
-                    equ = user_input.split()
-                    solve(equ)
+                equ = user_input.split()
+                equ = conv_to_float(equ, variables)
+                solve(equ)
 
