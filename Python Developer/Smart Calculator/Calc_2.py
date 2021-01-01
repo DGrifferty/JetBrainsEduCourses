@@ -79,10 +79,7 @@ def check_input(user_input, variables):
                 E = 'Invalid assignment'
             return False, E
 
-        elif 'av' not in conv_equ:
-            return True, 'Assignment'
-        else:
-            return True, 'Assignment', True
+        return True, 'Assignment'
 
     if 'uav' in conv_equ:
         E = 'Unassigned variable used'
@@ -161,10 +158,7 @@ def check_input(user_input, variables):
                     E = 'Bad left of closing bracket'
                     return False, E
 
-    if 'av' not in conv_equ:
-        return True, 'Calculation'
-    else:
-        return True, 'Calculation'
+    return True, 'Calculation'
 
     # TODO: if [n (] insert * or if )(
     # TODO: Make check input tell whether av's have been used, so they can be replaced
@@ -204,8 +198,9 @@ def define_variable(user_input, variables):
     equ = equ.split('=')
 
     if equ[-1] in variables.keys():
-        equ[-1] = variables[equ[0]]
-    variables[equ[0]] = equ[-1]
+        variables[equ[0]] = variables[equ[-1]]
+    else:
+        variables[equ[0]] = equ[-1]
 
     return variables
 
@@ -267,12 +262,8 @@ def bracket_scan(equ):
 
 
 def solve(equ):
-    # i = 0
+
     while True:
-        # if i < 10:
-        #     i += 1
-        #     print(f'Solve {i}')
-        #     print(equ)
 
         if '(' in equ:
             equ = bracket_scan(equ)
@@ -339,7 +330,7 @@ if __name__ == '__main__':
 
         check, type = check_input(user_input, variables)
 
-        if check == False:
+        if not check:
             print(type)
         else:
             if type == 'Assignment':
@@ -347,5 +338,4 @@ if __name__ == '__main__':
             elif type == 'Calculation':
                 equ = user_input.split()
                 equ = conv_to_float(equ, variables)
-                print(f'equ {equ}')
-                print(solve(equ))
+                print(f'{user_input} = {solve(equ)}')
